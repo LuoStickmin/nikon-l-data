@@ -1,0 +1,5 @@
+.local-samples/
+__pycache__/
+*.pyc
+out/*.npy
+out/*.bin
