@@ -72,6 +72,43 @@
    存的是明文镜像，就能直接和官方文件做已知明文攻击。目前 b1010/a1010/b1330 只找到代码字面量，
    没找到镜像，值得在压缩资源里继续找。
 
+## 6. FR 工具链与 D90 代码探测（本轮）
+
+D90 的 `D90_0101.bin` 是未加密的（至少资源区），所以先在 WSL 里搭了 Fujitsu FR 反汇编环境
+（不需要 root）：
+
+```bash
+# 1) 取 binutils 源码（Ubuntu 的 binutils-source 包含完整源码）
+apt-get download binutils-source && dpkg-deb -x binutils-source_*.deb root
+tar -xf root/usr/src/binutils/binutils-2.46.tar.xz
+
+# 2) 只构建 FR30 / FR-V 的 objdump（跳过 gas/gdb，绕开 flex/makeinfo）
+mkdir build && cd build
+../binutils-2.46/configure --target=fr30-elf --disable-nls --disable-werror \
+  --disable-gdb --disable-gas --disable-ld --disable-sim --disable-gprof --disable-doc
+make -j"$(nproc)" MAKEINFO=true \
+  CFLAGS="-O2 -std=gnu17 -Wno-implicit-function-declaration -Wno-error" all-binutils
+# 同样方式再 configure 一个 --target=frv-elf
+```
+
+得到的 `objdump -b binary -m fr30 / -m frv` 可以直接反汇编裸镜像。对 D90 的探测结果：
+
+| 区域 | FR30 未识别率 | FR-V 未识别率 |
+| --- | --- | --- |
+| `0x140000`（熵 6.67） | ~85% | ~75% |
+| `0x180000` | ~90% | — |
+| `0x1C0000` | ~83% | — |
+| `0x200000` | 0%，但全是重复的 `ld @(r14,384),r0`（数据表，非代码） | — |
+| `0x169474`（文件类型表指向） | ~89% | 噪声 |
+
+试过 16 位/32 位字节交换、用 T1/T2/T3 按多个 header 偏移解密，均无改善。文件类型表 `0x213000`
+的条目是 `段:偏移` 形式的 BE 地址（如 `0x00169474`），但对应区域并不是可识别的 FR30/FR-V 代码。
+
+**结论**：D90 的代码要么用了 **FR50/FR60 扩展指令**（binutils 的 FR30 只覆盖基础集），要么
+代码段本身被压缩/加密。下一步需要 FR60 级解码器（Ghidra 的 `desrdev/ghidra-fr60` 插件）或
+一台 D90 的 flash dump 来对照；单靠 binutils 的 FR30/FR-V 已经到头了。
+
+
 ## 6. 样本哈希（本地，不随仓库分发）
 
 ```

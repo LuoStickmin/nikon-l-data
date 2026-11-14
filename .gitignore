@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 out/*.npy
 out/*.bin
+out/d90dec/
+out/d90var/
