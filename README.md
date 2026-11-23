@@ -1,6 +1,6 @@
 # 尼康 L 固件（失真控制数据 / “镜头校准文件”）研究笔记
 
-日期：2026-11-11　范围：**只读静态分析**。对象是尼康公开下载的 Distortion Control Data（相机内显示为
+日期：2026-11-11（2026-11-14 增补 FR60 / D90 结果）　范围：**只读静态分析**。对象是尼康公开下载的 Distortion Control Data（相机内显示为
 `L` / `LD`）数据文件，以及手头已有的机身固件镜像。没有向任何相机写入，也没有生成可刷写的固件。
 
 ## 0. 结论速览
@@ -268,6 +268,7 @@ out/key-2.018-keys.json       恢复出的密钥（108×u16，含 4 重歧义说
 out/key-2.018-decoded.csv     解码后的 307×27 系数
 out/NKLD0218.info.txt         容器摘要 + CRC 校验输出
 docs/leads.md                 D90→D780 通用带来的新切口与探测结果
+docs/ghidra-fr60.md           Ghidra 12.2 + FR60 环境与 D90 Firmware A 初读
 .local-samples/               本地样本（.gitignore，不进入仓库）
 ```
 
@@ -291,3 +292,16 @@ docs/leads.md                 D90→D780 通用带来的新切口与探测结果
 - 密钥在 D90/D7200/D750/D780/D3300 六个镜像里都不以明文表存在；
 - 值得继续的切口：FR 反汇编 D90、用 WMA_ 容器做已知明文对、老版本 L 数据（2.000/2.013）、
   PTP 读 L flash（`CPTPCGetLensDataFlashRead`）。
+
+## 13. NEF ��Ƭ������D5200 + AF-S DX 18-55��
+
+�û��ṩ������ NEF��55mm f/5.6������ʧ����ƿ������Źأ��ѽ�����
+
+- ��ͷ���ݣ����� MakerNote LensData����`9A 40 2D 53 2C 3C 9C` =
+  **AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G**��
+- �� raw vs ���� JPEG ���Բ����ʵ��ʩ�ӵľ���У����55mm �˻���ӽ� 0���� raw/JPEG ��
+  ϵͳ��ƫ��ͬ������**�����Զ��� L ����**��
+- 18-55 �� LensID û��ֱ�ӳ����� NKLD �L ��¼���ı�����δ�⡣
+
+��� [docs/nef-d5200-18-55.md](docs/nef-d5200-18-55.md)������ `tools/nef_info.py`��
+`tools/nef_measure_distortion.py`��
