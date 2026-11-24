@@ -293,15 +293,15 @@ docs/ghidra-fr60.md           Ghidra 12.2 + FR60 环境与 D90 Firmware A 初读
 - 值得继续的切口：FR 反汇编 D90、用 WMA_ 容器做已知明文对、老版本 L 数据（2.000/2.013）、
   PTP 读 L flash（`CPTPCGetLensDataFlashRead`）。
 
-## 13. NEF ��Ƭ������D5200 + AF-S DX 18-55��
+## 13. NEF 样片分析（D5200 + AF-S DX 18-55）
 
-�û��ṩ������ NEF��55mm f/5.6������ʧ����ƿ������Źأ��ѽ�����
+用户提供的四张 NEF（55mm f/5.6，两张失真控制开、两张关）已解析：
 
-- ��ͷ���ݣ����� MakerNote LensData����`9A 40 2D 53 2C 3C 9C` =
-  **AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G**��
-- �� raw vs ���� JPEG ���Բ����ʵ��ʩ�ӵľ���У����55mm �˻���ӽ� 0���� raw/JPEG ��
-  ϵͳ��ƫ��ͬ������**�����Զ��� L ����**��
-- 18-55 �� LensID û��ֱ�ӳ����� NKLD �L ��¼���ı�����δ�⡣
+- 镜头身份（解密 MakerNote LensData）：`9A 40 2D 53 2C 3C 9C` =
+  **AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G**；
+- 用 raw vs 机内 JPEG 尝试测相机实际施加的径向校正：55mm 端畸变接近 0，且 raw/JPEG 的
+  系统性偏差同量级，**不足以定标 L 数据**；
+- 18-55 的 LensID 没有直接出现在 NKLD 里，L 记录键的编码仍未解。
 
-��� [docs/nef-d5200-18-55.md](docs/nef-d5200-18-55.md)������ `tools/nef_info.py`��
-`tools/nef_measure_distortion.py`��
+详见 [docs/nef-d5200-18-55.md](docs/nef-d5200-18-55.md)，工具 `tools/nef_info.py`、
+`tools/nef_measure_distortion.py`。
