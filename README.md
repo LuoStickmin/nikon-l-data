@@ -269,6 +269,10 @@ out/key-2.018-decoded.csv     解码后的 307×27 系数
 out/NKLD0218.info.txt         容器摘要 + CRC 校验输出
 docs/leads.md                 D90→D780 通用带来的新切口与探测结果
 docs/ghidra-fr60.md           Ghidra 12.2 + FR60 环境与 D90 Firmware A 初读
+docs/nef-d5200-18-55.md       D5200 + 18-55 样片分析
+docs/nef-d750-18-70.md        D750 + 18-70 样片分析
+tools/nef_info.py             NEF 镜头信息 / LensData 解密
+tools/nef_measure_distortion.py  raw vs 机内 JPEG 的畸变测量
 .local-samples/               本地样本（.gitignore，不进入仓库）
 ```
 
@@ -305,3 +309,15 @@ docs/ghidra-fr60.md           Ghidra 12.2 + FR60 环境与 D90 Firmware A 初读
 
 详见 [docs/nef-d5200-18-55.md](docs/nef-d5200-18-55.md)，工具 `tools/nef_info.py`、
 `tools/nef_measure_distortion.py`。
+
+## 14. NEF 样片分析（D750 + AF-S DX 18-70，DX 裁切）
+
+四张 NEF（18mm/70mm，失真控制各开/关一张）已解析：
+
+- 镜头身份：`7F 40 2D 5C 2C 34 84` = **AF-S DX Zoom-Nikkor 18-70mm f/3.5-4.5G IF-ED**；
+- DX 裁切确认：主图 3968×2640（FX 应为 6016×4016）；
+- 第 4 张 `…631.NEF` 只有 4 MiB，raw strip 声明 11.4 MB，**raw 被截断**，只用于元数据/预览；
+- 18mm On/Off 的 raw-vs-JPEG 对比显示 r≈0.2–0.4 处约 +1.5% 的径向差异，方向与桶形校正一致，
+  但匹配点集中在 r<0.6、角落无对应点，**尚不能定量出 k(ρ²)/k(ρ⁴)/k(ρ⁶)**。
+
+详见 [docs/nef-d750-18-70.md](docs/nef-d750-18-70.md)。
